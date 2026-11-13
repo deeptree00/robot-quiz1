@@ -1,71 +1,72 @@
-# ============================================================
-#  Part A. Python 문제 (50점)
-#  - 문제 설명은 문제지.pdf 에 있습니다.
-#  - 함수 이름, 클래스 이름, 매개변수는 바꾸지 마세요. (자동 채점됩니다)
-#  - 결과는 print 가 아니라 반드시 return 으로 돌려주세요.
-#  - pass 를 지우고 코드를 작성하세요.
-#  - 다 풀고 나면  python3 python_quiz.py  로 실행해서
-#    에러 없이 예시 결과가 나오는지 꼭 확인하세요.
-# ============================================================
+# Part A 모범답안 (채점기 기준 50점 만점)
 
 
-# ------------------------------------------------------------
-# 문제 1. 배달비 계산 (8점)
-# ------------------------------------------------------------
 def delivery_fee(total, distance):
-    pass
+    if total >= 30000:
+        return 0
+    elif distance < 2:
+        return 2000
+    elif distance < 5:
+        return 3000
+    else:
+        return 5000
 
 
-# ------------------------------------------------------------
-# 문제 2. 운동장 이벤트 당첨자 찾기 (12점)
-# ------------------------------------------------------------
 def find_winners(numbers):
-    pass
+    winners = []
+    for i in range(len(numbers)):
+        if 10 <= numbers[i] <= 17:
+            winners.append(i + 1)
+    return winners
 
 
-# ------------------------------------------------------------
-# 문제 3. 주문 금액 계산 (12점)
-# ------------------------------------------------------------
 def order_total(menu, orders):
+    total = 0
+    unknown = 0
+    for name in orders:
+        if name in menu:
+            total += menu[name]
+        else:
+            unknown += 1
+    return total, unknown
+
+
+class SoldOutError(Exception):
     pass
-
-
-# ------------------------------------------------------------
-# 문제 4. 비빔우동 키오스크 2.0 (18점)
-# ------------------------------------------------------------
-# (1) 여기에 SoldOutError 클래스를 직접 만드세요.
-
 
 
 class UdonKiosk:
-    PRICE = 7000  # 비빔우동 한 그릇 가격
+    PRICE = 7000
 
     def __init__(self, stock):
-        pass
+        self.stock = stock
+        self.sold = 0
 
     def order(self, text):
-        pass
+        if self.stock == 0:
+            raise SoldOutError("매진되었습니다.")
+        count = int(text)            # "abc", "1.5" 는 여기서 ValueError 발생
+        if count < 1:
+            raise ValueError("1 이상의 정수만 주문할 수 있습니다.")
+        if count > self.stock:
+            raise ValueError("남은 수량보다 많이 주문할 수 없습니다.")
+        self.stock -= count
+        self.sold += count
+        return count * self.PRICE
 
     def total_sales(self):
-        pass
+        return self.sold * self.PRICE
 
 
-# ============================================================
-#  아래는 확인용 코드입니다. 수정하지 않아도 됩니다.
-#  python3 python_quiz.py 로 실행하면 문제지의 예시와 비교할 수 있습니다.
-# ============================================================
 def main():
+    print("문제 1 :", delivery_fee(12000, 3))
+    print("문제 2 :", find_winners([10, 20, 17, 9]))
     menu = {"비빔우동": 7000, "튀김우동": 8000, "유부초밥": 4000}
-    try:
-        print("문제 1 :", delivery_fee(12000, 3))            # 3000
-        print("문제 2 :", find_winners([10, 20, 17, 9]))     # [1, 3]
-        print("문제 3 :", order_total(menu, ["비빔우동", "유부초밥", "비빔우동", "돈까스"]))  # (18000, 1)
-        kiosk = UdonKiosk(3)
-        print("문제 4 :", kiosk.order("2"))                  # 14000
-        print("문제 4 :", kiosk.stock, kiosk.sold)           # 1 2
-        print("문제 4 :", kiosk.total_sales())               # 14000
-    except Exception as e:
-        print("에러 발생 :", type(e).__name__, e)
+    print("문제 3 :", order_total(menu, ["비빔우동", "유부초밥", "비빔우동", "돈까스"]))
+    kiosk = UdonKiosk(3)
+    print("문제 4 :", kiosk.order("2"))
+    print("문제 4 :", kiosk.stock, kiosk.sold)
+    print("문제 4 :", kiosk.total_sales())
 
 
 if __name__ == "__main__":
